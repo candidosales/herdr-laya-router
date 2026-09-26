@@ -1,0 +1,57 @@
+# Laya Router: classify a task locally with Laya, pick agent/model/effort,
+# launch it in a new Herdr pane.
+#
+# Install:  herdr plugin install candidosales/herdr-laya-router
+# Develop:  herdr plugin link /path/to/herdr-laya-router
+#
+# Requires Node.js 20+ and a Laya server (default http://127.0.0.1:8770).
+# No build step: plain ESM, no dependencies.
+
+id = "candidosales.laya-router"
+name = "Laya Router"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "Route coding tasks to the right agent, model and effort with Laya, a local decision model"
+platforms = ["linux", "macos"]
+
+[[startup]]
+command = ["bash", "scripts/startup.sh"]
+
+[[panes]]
+id = "route"
+title = "Laya: route a task"
+placement = "overlay"
+command = ["bash", "scripts/route.sh"]
+
+[[panes]]
+id = "status"
+title = "Laya: router status"
+placement = "overlay"
+command = ["bash", "scripts/status.sh"]
+
+[[panes]]
+id = "laya-server"
+title = "Laya server"
+placement = "split"
+command = ["bash", "scripts/laya-server.sh"]
+
+[[actions]]
+id = "route"
+title = "Laya: route a task"
+description = "Describe a task; Laya picks agent, model and effort and launches it next to the current pane"
+contexts = ["global"]
+command = ["bash", "scripts/open-pane.sh", "route"]
+
+[[actions]]
+id = "status"
+title = "Laya: router status"
+description = "Laya health, configured agents and recent routing decisions"
+contexts = ["global"]
+command = ["bash", "scripts/open-pane.sh", "status"]
+
+[[actions]]
+id = "start-server"
+title = "Laya: start server"
+description = "Run the Laya server in a split pane if it is not already up"
+contexts = ["global"]
+command = ["bash", "scripts/open-pane.sh", "laya-server"]

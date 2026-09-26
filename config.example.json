@@ -1,0 +1,28 @@
+{
+  "laya": {
+    "url": "http://127.0.0.1:8770",
+    "timeoutMs": 5000,
+    "serverDir": "~/Documents/Projects/laya-playground"
+  },
+  "askBelow": 0.45,
+  "agents": {
+    "claude": { "kind": "claude", "enabled": true, "exhausted": false },
+    "opencode": { "kind": "opencode", "enabled": true, "exhausted": false },
+    "codex": { "kind": "codex", "enabled": true, "exhausted": false }
+  },
+  "models": {
+    "claude-opus": { "agent": "claude", "model": "opus", "efforts": ["low", "medium", "high"] },
+    "claude-sonnet": { "agent": "claude", "model": "sonnet", "efforts": ["low", "medium", "high"] },
+    "claude-haiku": { "agent": "claude", "model": "haiku", "efforts": [] },
+    "codex": { "agent": "codex", "model": null, "efforts": ["low", "medium", "high"] },
+    "opencode": { "agent": "opencode", "model": null, "efforts": [] }
+  },
+  "routes": {
+    "planning": { "light": ["claude-sonnet", "opencode"], "standard": ["claude-opus", "codex", "opencode"], "heavy": ["claude-opus", "codex", "opencode"] },
+    "coding": { "light": ["claude-sonnet", "codex", "opencode"], "standard": ["claude-sonnet", "codex", "opencode"], "heavy": ["claude-opus", "codex", "opencode"] },
+    "debugging": { "light": ["claude-sonnet", "codex", "opencode"], "standard": ["claude-sonnet", "codex", "opencode"], "heavy": ["claude-opus", "codex", "opencode"] },
+    "review": { "light": ["claude-sonnet", "opencode"], "standard": ["claude-sonnet", "codex", "opencode"], "heavy": ["claude-opus", "codex", "opencode"] },
+    "research": { "light": ["claude-haiku", "opencode"], "standard": ["claude-sonnet", "opencode"], "heavy": ["claude-opus", "opencode"] },
+    "writing": { "light": ["claude-haiku", "opencode"], "standard": ["claude-sonnet", "opencode"], "heavy": ["claude-sonnet", "opencode"] }
+  }
+}
