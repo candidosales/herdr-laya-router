@@ -1,8 +1,39 @@
 # Laya Router for Herdr
 
-Describe a task. [Laya](https://brainfunctioncollapse.com/laya), a local decision model, classifies it. The router then picks an agent, model and effort level and starts that agent in a new Herdr pane next to the one you are working in.
+Local task routing for AI coding agents in [Herdr](https://herdr.dev).
 
-Based on the idea behind [agent-router](https://github.com/nidhi-singh02/agent-router). Here the classification runs on your own machine in about 110 ms, and no task text is sent to a hosted LLM.
+Describe a task. [Laya](https://brainfunctioncollapse.com/laya), a decision model running on your machine, classifies it. The router picks the agent, model and reasoning effort, then starts that agent in a new pane next to the one you are working in and hands it the task.
+
+```text
+$ router explain "Audit the auth module for security issues"
+family   review (p=0.81)
+scope    1.75 -> standard
+flags    ambiguous=0.11 risky=0.65
+effort   high  (standard scope -> medium; risky -> bump to high)
+route    claude --model sonnet (effort high)  [claude-sonnet]
+laya     266 ms (english)
+```
+
+> **Pre-release (0.1.x).** Routing accuracy is measured on 42 hand-labelled tasks that were also used for tuning, so treat the numbers under [Tests](#tests) as optimistic.
+
+## Why Laya Router?
+
+- **Task text stays on your machine.** Laya runs locally. There is no API key and no hosted LLM call.
+- **Fast.** A warm classification takes about 110 to 270 ms.
+- **The model reads the task; the policy makes the decision.** Laya only answers questions about the task (type, size, ambiguous, risky). Plain code and your config pick the agent, model and effort, so every route can be explained and changed.
+- **Keeps working when Laya is down.** A keyword classifier takes over, and the decision says so.
+- **Agent-agnostic.** Claude Code, Codex and OpenCode, launched through Herdr's own `agent start`.
+- **No build step.** Plain Node.js ESM with no dependencies.
+
+Inspired by [agent-router](https://github.com/nidhi-singh02/agent-router):
+
+| | agent-router | Laya Router |
+|---|---|---|
+| Ranking | TypeSafe, a hosted API that receives the task text | Laya, a local model |
+| When the ranker is unavailable | No routing | Keyword fallback |
+| Quota handling | Usage collectors and reserve floors | Manual `exhausted` flag per agent |
+| Agents | Cursor, Claude Code, Codex, OpenCode | Claude Code, Codex, OpenCode |
+| Packaging | CLI plus a Herdr plugin | Herdr plugin with a CLI |
 
 ## How it routes
 
@@ -55,7 +86,7 @@ Herdr actions:
 | Laya: router status | Shows Laya health, agent availability and recent decisions |
 | Laya: start server | Runs `server.py` from `laya.serverDir` in a split, unless Laya is already up |
 
-CLI, for scripts or other agents:
+CLI, for scripts or other agents. The examples above use `router` as an alias for `node bin/router.mjs`:
 
 ```sh
 node bin/router.mjs explain "Fix the login crash in production"     # decide only, launch nothing
