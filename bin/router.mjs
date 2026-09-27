@@ -4,10 +4,11 @@
 //   router.mjs route "<task>" [--dry-run] [--json] [--cwd DIR] [--pane ID] [--yes]
 //   router.mjs explain "<task>"            (route --dry-run)
 //   router.mjs status [--json]
+//   router.mjs warm                        (one Laya request so the next route is fast)
 
 import { createInterface } from "node:readline/promises";
 import { ConfigError, loadConfig } from "../lib/config.mjs";
-import { health } from "../lib/laya.mjs";
+import { classify, health } from "../lib/laya.mjs";
 import { classifyTask } from "../lib/classify.mjs";
 import { agentArgs, decide, onPath } from "../lib/policy.mjs";
 import { launch, LaunchError, originPane, paneCwd } from "../lib/herdr.mjs";
@@ -119,6 +120,20 @@ async function status(cfg, opts) {
   return 0;
 }
 
+// The first prediction after the server idles can take longer than the request
+// timeout; one throwaway request up front keeps the user's first route off the fallback.
+async function warm(cfg) {
+  const t0 = Date.now();
+  try {
+    await classify(cfg.laya, "warm up");
+  } catch (e) {
+    console.error(`warm-up failed: ${e.message}`);
+    return 1;
+  }
+  console.log(`laya warm in ${Date.now() - t0} ms`);
+  return 0;
+}
+
 async function main() {
   const opts = parseArgs(process.argv.slice(2));
   let cfg;
@@ -138,8 +153,10 @@ async function main() {
       return route(cfg, { ...opts, dryrun: true });
     case "status":
       return status(cfg, opts);
+    case "warm":
+      return warm(cfg);
     default:
-      console.error('usage: router.mjs route|explain "<task>" [--dry-run] [--json] [--cwd DIR] [--pane ID] [--yes]\n       router.mjs status [--json]');
+      console.error('usage: router.mjs route|explain "<task>" [--dry-run] [--json] [--cwd DIR] [--pane ID] [--yes]\n       router.mjs status [--json]\n       router.mjs warm');
       return EXIT.usage;
   }
 }

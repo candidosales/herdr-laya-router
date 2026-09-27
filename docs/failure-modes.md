@@ -6,7 +6,7 @@ E2E check that covers it.
 | # | Failure | Expected behaviour | Covered by |
 |---|---|---|---|
 | F1 | Laya server not running (connection refused) | Route with keyword fallback, mark `source: "fallback"`, show reason | `e2e/herdr-launch.mjs` laya-down-fallback |
-| F2 | Laya slow or still loading checkpoints (timeout) | Abort request after `laya.timeoutMs`, fall back like F1 | `e2e/herdr-launch.mjs` laya-down-fallback (dead port) |
+| F2 | Laya slow or still loading checkpoints (timeout) | Abort request after `laya.timeoutMs` (15 s; the first request after idle can exceed 5 s, so startup sends a warm-up), fall back like F1 | `e2e/herdr-launch.mjs` laya-down-fallback (dead port) |
 | F3 | Laya returns 400 (bad question, options over head budget) | Fall back, surface the server error text | `e2e/routing-eval.mjs` fails loudly on any 400 |
 | F4 | Laya returns malformed JSON / missing answers | Fall back, name the missing answer | `e2e/routing-eval.mjs` |
 | F5 | Task empty or whitespace | Refuse before any call, exit 2 | `e2e/herdr-launch.mjs` empty-task |

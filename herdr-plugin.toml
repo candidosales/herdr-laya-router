@@ -9,7 +9,7 @@
 
 id = "candidosales.laya-router"
 name = "Laya Router"
-version = "0.1.0"
+version = "0.1.1"
 min_herdr_version = "0.9.0"
 description = "Route coding tasks to the right agent, model and effort with Laya, a local decision model"
 platforms = ["linux", "macos"]

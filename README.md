@@ -18,7 +18,7 @@ Based on the idea behind [agent-router](https://github.com/nidhi-singh02/agent-r
    - **effort flag**: clamped to what the chosen model supports.
 3. If a keyword check finds a risk word and Laya scored the task as safe, the risky score is raised to 0.8.
 4. If the family confidence is below `askBelow` and the task is risky, the interactive pane offers the runner-up route before launching.
-5. If Laya is down or times out, a keyword classifier takes over and the decision is marked `source: "fallback"`.
+5. If Laya is down or does not answer within `laya.timeoutMs` (15 s), a keyword classifier takes over and the decision is marked `source: "fallback"`. The first request after Laya sits idle can take more than 5 s, so the startup hook sends one warm-up request.
 
 Every decision is appended to `decisions.jsonl` in the plugin state directory. The log stores a hash of the task and a 120-character preview with secrets redacted.
 
@@ -61,6 +61,7 @@ CLI, for scripts or other agents:
 node bin/router.mjs explain "Fix the login crash in production"     # decide only, launch nothing
 node bin/router.mjs route "Add a --verbose flag" --pane w1:p4 --yes  # decide and launch
 node bin/router.mjs status --json
+node bin/router.mjs warm            # one throwaway Laya request; the startup hook runs this
 ```
 
 Exit codes: `2` usage or config error, `3` no eligible agent, `4` not inside Herdr, `5` launch failed.

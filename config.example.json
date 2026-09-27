@@ -1,7 +1,7 @@
 {
   "laya": {
     "url": "http://127.0.0.1:8770",
-    "timeoutMs": 5000,
+    "timeoutMs": 15000,
     "serverDir": "~/Documents/Projects/laya-playground"
   },
   "askBelow": 0.45,
